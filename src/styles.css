@@ -1,0 +1,225 @@
+/* Couleurs : thème clair par défaut */
+:root {
+  color-scheme: light;
+  --bg: #f2f4f1;
+  --card: #ffffff;
+  --text: #14201b;
+  --text-2: #5a675f;
+  --border: #dde3de;
+  --green: #1f6f4a;
+  --orange: #c2410c;
+  --green-pale: #ddebe3;
+  --on-green: #ffffff;
+  --radius: 16px;
+  --tabbar-height: 60px;
+}
+
+/* Thème sombre : en automatique si l'iPhone est en sombre, ou choisi dans les Réglages */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --bg: #0e1512;
+    --card: #17211c;
+    --text: #e8efea;
+    --text-2: #9aa9a0;
+    --border: #26332c;
+    --green: #4cc38a;
+    --orange: #f08a5d;
+    --green-pale: #1d3329;
+    --on-green: #0e1512;
+  }
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #0e1512;
+  --card: #17211c;
+  --text: #e8efea;
+  --text-2: #9aa9a0;
+  --border: #26332c;
+  --green: #4cc38a;
+  --orange: #f08a5d;
+  --green-pale: #1d3329;
+  --on-green: #0e1512;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Archivo Variable', system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.45;
+  -webkit-tap-highlight-color: transparent;
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+.app {
+  max-width: 600px;
+  margin: 0 auto;
+  min-height: 100dvh;
+}
+
+/* En-tête */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: calc(env(safe-area-inset-top) + 8px) 16px 8px;
+  background: var(--bg);
+}
+
+.topbar h1 {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.icon-button {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin-right: -10px;
+  color: var(--text);
+  border-radius: 50%;
+}
+
+/* Contenu : laisse la place à la barre du bas */
+.content {
+  display: grid;
+  gap: 12px;
+  padding: 4px 16px calc(var(--tabbar-height) + env(safe-area-inset-bottom) + 16px);
+}
+
+.card {
+  display: grid;
+  gap: 8px;
+  padding: 16px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.card h2 {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.muted {
+  color: var(--text-2);
+}
+
+.date {
+  color: var(--text-2);
+}
+
+.date::first-letter {
+  text-transform: uppercase;
+}
+
+/* Chiffres du jour */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.stat {
+  gap: 2px;
+  padding: 12px;
+}
+
+.stat-label {
+  color: var(--text-2);
+  font-size: 14px;
+}
+
+.stat-value {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+/* Sélecteur à plusieurs choix */
+.segmented {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px;
+  padding: 4px;
+  background: var(--bg);
+  border-radius: 12px;
+}
+
+.segmented button {
+  min-height: 44px;
+  padding: 0 4px;
+  color: var(--text);
+  background: transparent;
+  border: 0;
+  border-radius: 9px;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.segmented button[aria-checked='true'] {
+  color: var(--on-green);
+  background: var(--green);
+}
+
+/* Barre de navigation du bas */
+.tabbar {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  max-width: 600px;
+  margin: 0 auto;
+  padding-bottom: env(safe-area-inset-bottom);
+  background: var(--card);
+  border-top: 1px solid var(--border);
+}
+
+.tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  height: var(--tabbar-height);
+  color: var(--text-2);
+  font-size: 12px;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.tab[aria-current='page'] {
+  color: var(--green);
+  font-weight: 700;
+}
+
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 2px;
+}

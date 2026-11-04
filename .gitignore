@@ -1,0 +1,8 @@
+node_modules
+dist
+dev-dist
+*.local
+.env
+.env.*
+.claude
+PROMPT_CLAUDE_CODE.md

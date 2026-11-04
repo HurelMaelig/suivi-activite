@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Suivi activité</title>
+    <meta name="description" content="Suivi personnel du sport et de l’alimentation" />
+    <meta name="theme-color" content="#F2F4F1" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Suivi" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="icon" href="%BASE_URL%favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="%BASE_URL%apple-touch-icon-180x180.png" />
+    <script>
+      // Appliqué avant l'affichage pour éviter un flash de la mauvaise couleur.
+      try {
+        var t = localStorage.getItem('theme')
+        if (t === 'clair') document.documentElement.dataset.theme = 'light'
+        if (t === 'sombre') document.documentElement.dataset.theme = 'dark'
+      } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
