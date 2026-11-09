@@ -18,7 +18,7 @@ import type {
 import { seed } from './seed'
 
 // Base de données IndexedDB du navigateur : tout reste sur l'appareil et marche sans réseau.
-class AppDB extends Dexie {
+export class AppDB extends Dexie {
   exercises!: Table<Exercise, string>
   templates!: Table<Template, string>
   workouts!: Table<Workout, string>
@@ -30,8 +30,8 @@ class AppDB extends Dexie {
   steps!: Table<Steps, string>
   settings!: Table<SettingRow, string>
 
-  constructor() {
-    super('suivi-activite')
+  constructor(name = 'suivi-activite') {
+    super(name)
     // Seuls les champs listés ici sont indexés (servent aux recherches) ; les autres sont stockés quand même.
     this.version(1).stores({
       exercises: 'id, updated_at',

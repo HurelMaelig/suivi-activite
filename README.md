@@ -17,9 +17,41 @@ Les règles de suggestion (double progression, semaine allégée, cardio, nutrit
 
 ## Où sont les données
 
-Pour l'instant, **tout est enregistré sur l'appareil** (base IndexedDB du navigateur, via Dexie). Supprimer l'app de l'écran d'accueil ou effacer les données de Safari efface tout : exporte régulièrement une sauvegarde depuis **Réglages > Sauvegarde**. La synchronisation en ligne arrive en Phase 2.
+**Tout est d'abord enregistré sur l'appareil** (base IndexedDB du navigateur, via Dexie) : l'app marche sans réseau. Une fois connecté dans **Réglages > Compte et synchronisation**, les données sont aussi sauvegardées sur Supabase et partagées entre tes appareils.
 
-Chaque enregistrement a un `id` (UUID), une date `updated_at` et un champ `deleted` (suppression douce). L'import fusionne : pour chaque élément, la version la plus récente gagne.
+Chaque enregistrement a un `id` (UUID), une date `updated_at` et un champ `deleted` (suppression douce). En cas de conflit, à la synchronisation comme à l'import d'un fichier, la version la plus récente gagne.
+
+La synchronisation (`src/sync/`) envoie les changements locaux, puis récupère ceux du serveur. Elle se lance à l'ouverture, au retour du réseau, quelques secondes après une modification et toutes les 5 minutes. Un appareil neuf qui se connecte à un compte existant remplace ses données de départ par celles du compte (pas de doublons).
+
+## Configurer Supabase (une seule fois)
+
+1. Crée un projet sur [supabase.com](https://supabase.com) (offre gratuite).
+2. **SQL Editor > New query** : colle le contenu de `supabase/schema.sql`, puis **Run**. Le script crée la table `records`, les règles d'accès (chaque compte ne voit que ses lignes) et la fonction d'envoi.
+3. **Authentication > URL Configuration** :
+   - Site URL : `https://hurelmaelig.github.io/suivi-activite/`
+   - Redirect URLs : ajoute `http://localhost:5173/**` et `http://localhost:4173/**`
+4. **Authentication > Emails > Magic Link** : le modèle doit contenir le code `{{ .Token }}`. Sur iPhone, l'app installée ne peut pas recevoir le lien (il s'ouvre dans Safari, qui a son propre stockage) : on tape donc le code dans l'app.
+5. Récupère l'adresse du projet et la clé publique (**publishable** ou **anon**) :
+   - en local, dans un fichier `.env.local` (jamais commité) :
+
+     ```
+     VITE_SUPABASE_URL=https://xxxx.supabase.co
+     VITE_SUPABASE_KEY=sb_publishable_xxxx
+     ```
+
+   - pour le site en ligne, dans les variables du dépôt GitHub (`SUPABASE_URL` et `SUPABASE_KEY`) :
+
+     ```bash
+     gh variable set SUPABASE_URL --body "https://xxxx.supabase.co"
+     ```
+
+     ```bash
+     gh variable set SUPABASE_KEY --body "sb_publishable_xxxx"
+     ```
+
+Ne mets **jamais** la clé `secret` / `service_role` ni le mot de passe de la base dans l'app ou dans Git.
+
+**Pause du projet gratuit** : Supabase met en pause un projet gratuit inactif depuis environ 7 jours. Le workflow `.github/workflows/keep-alive.yml` envoie une petite requête le lundi et le jeudi pour l'éviter. Si le projet est quand même en pause, l'app l'indique et reste utilisable en local ; il suffit de le relancer depuis le tableau de bord Supabase (**Restore project**).
 
 ## Tests
 
@@ -83,4 +115,4 @@ npx @vite-pwa/assets-generator --preset minimal-2023 public/favicon.svg
 
 ## Secrets
 
-Aucun secret ne doit se trouver dans le code ni dans Git. Seule la clé publique "anon" de Supabase pourra figurer dans le front (à partir de la Phase 2), car elle est protégée par les règles d'accès (RLS).
+Aucun secret ne doit se trouver dans le code ni dans Git. Seule la clé publique de Supabase (publishable / anon) figure dans l'app construite, car elle est protégée par les règles d'accès (RLS).

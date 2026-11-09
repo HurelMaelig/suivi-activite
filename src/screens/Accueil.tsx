@@ -20,6 +20,8 @@ import { pickTemplate, planSession } from '../lib/rules/workout'
 import { startSession } from '../lib/session'
 import { MINUTES, useAvailableMinutes, useOnline } from '../lib/prefs'
 import { CARDIO_LABEL } from '../lib/labels'
+import { useSync } from '../sync'
+import { syncLabel } from '../components/SyncCard'
 
 
 export function Accueil() {
@@ -269,6 +271,8 @@ function SuggestionCard({ workouts }: { workouts: Workout[] }) {
 
 function ServicesCard() {
   const online = useOnline()
+  const state = useSync()
+  const sync = syncLabel(state)
   return (
     <section className="card">
       <h2>Connexions</h2>
@@ -278,8 +282,10 @@ function ServicesCard() {
           <span className={online ? 'ok' : 'muted'}>{online ? 'En ligne' : 'Hors ligne'}</span>
         </li>
         <li>
-          <span>Sauvegarde en ligne</span>
-          <span className="muted">Phase 2</span>
+          <span>Synchronisation</span>
+          <a href="#reglages" className={sync.tone === 'error' ? 'error' : sync.tone}>
+            {sync.text}
+          </a>
         </li>
         <li>
           <span>Strava (Garmin)</span>
@@ -290,7 +296,10 @@ function ServicesCard() {
           <span className="muted">Phase 3</span>
         </li>
       </ul>
-      <p className="muted small">Tes données sont enregistrées sur cet appareil.</p>
+      {state.status === 'error' && state.error && <p className="note">{state.error}</p>}
+      <p className="muted small">
+        {state.email ? 'Tes données sont sur cet appareil et sauvegardées en ligne.' : 'Tes données sont enregistrées sur cet appareil.'}
+      </p>
     </section>
   )
 }

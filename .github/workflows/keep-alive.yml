@@ -1,0 +1,30 @@
+# L'offre gratuite de Supabase met le projet en pause après environ 7 jours sans activité.
+# Ce workflow envoie une petite requête deux fois par semaine pour le garder actif.
+name: Supabase actif
+
+on:
+  schedule:
+    - cron: '17 6 * * 1,4' # lundi et jeudi, 6 h 17 (UTC)
+  workflow_dispatch: # lancement à la main depuis l'onglet Actions
+
+permissions:
+  contents: read
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Requête vers la base
+        env:
+          SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ vars.SUPABASE_KEY }}
+        run: |
+          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_KEY" ]; then
+            echo "Variables SUPABASE_URL et SUPABASE_KEY absentes : rien à faire."
+            exit 0
+          fi
+          # Lecture d'une ligne avec la clé publique : les règles d'accès renvoient une liste vide,
+          # mais la base a bien travaillé, ce qui compte comme une activité.
+          code=$(curl -sS -o /dev/null -w "%{http_code}" "$SUPABASE_URL/rest/v1/records?select=id&limit=1" -H "apikey: $SUPABASE_KEY")
+          echo "Réponse de Supabase : $code"
+          test "$code" = "200"

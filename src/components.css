@@ -727,3 +727,13 @@ button.icon-button:disabled {
 .bar-orange {
   fill: var(--orange);
 }
+
+.code-input {
+  font-size: 22px;
+  letter-spacing: 0.2em;
+  text-align: center;
+}
+
+.status-list a {
+  text-decoration: none;
+}

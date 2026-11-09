@@ -53,6 +53,15 @@ export function formatShort(key: string): string {
   return fmtShort.format(fromKey(key))
 }
 
+// « à l'instant », « il y a 5 min », « il y a 2 h », sinon la date
+export function formatAgo(iso: string, now = Date.now()): string {
+  const min = Math.floor((now - Date.parse(iso)) / 60_000)
+  if (min < 1) return 'à l’instant'
+  if (min < 60) return `il y a ${min} min`
+  if (min < 24 * 60) return `il y a ${Math.floor(min / 60)} h`
+  return `le ${formatShort(toKey(new Date(iso)))}`
+}
+
 export function formatRelative(key: string): string {
   const diff = daysBetween(key, today())
   if (diff === 0) return 'aujourd’hui'

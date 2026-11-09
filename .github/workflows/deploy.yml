@@ -29,6 +29,9 @@ jobs:
         env:
           # L'app est servie depuis /nom-du-depot/, pas depuis la racine du site.
           VITE_BASE: /${{ github.event.repository.name }}/
+          # Adresse et clé publique Supabase : variables du dépôt (Settings > Secrets and variables > Actions > Variables)
+          VITE_SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+          VITE_SUPABASE_KEY: ${{ vars.SUPABASE_KEY }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

@@ -4,6 +4,7 @@ import { useMeasures, useNutrition, useSettings, type SettingsState } from '../d
 import type { CardioType, Goal, Goals, Profile, Sex } from '../db/types'
 import { Field, NumInput, Segmented } from '../components/ui'
 import { WeightSheet } from '../components/WeightSheet'
+import { SyncCard } from '../components/SyncCard'
 import { useTheme, type ThemeChoice } from '../lib/theme'
 import { fmt0, fmtKg } from '../lib/format'
 import { formatShort } from '../lib/dates'
@@ -33,13 +34,11 @@ export function Reglages() {
       {settings && <GoalsCard goals={settings.goals} />}
       <BackupCard />
 
+      <SyncCard />
+
       <section className="card">
-        <h2>Comptes et connexions</h2>
+        <h2>Connexions</h2>
         <ul className="status-list">
-          <li>
-            <span>Sauvegarde en ligne (Supabase)</span>
-            <span className="muted">Phase 2</span>
-          </li>
           <li>
             <span>Strava (activités Garmin)</span>
             <span className="muted">Phase 3</span>
@@ -283,7 +282,7 @@ function BackupCard() {
     <section className="card">
       <h2>Sauvegarde</h2>
       <p className="muted small">
-        Tes données ne sont que sur cet appareil. Exporte régulièrement un fichier de sauvegarde (par exemple dans Fichiers ou iCloud Drive).
+        Un fichier de sauvegarde reste utile, même avec la synchronisation (par exemple dans Fichiers ou iCloud Drive).
       </p>
       <div className="button-row">
         <button
