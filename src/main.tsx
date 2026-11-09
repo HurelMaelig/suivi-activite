@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { registerSW } from 'virtual:pwa-register'
 import '@fontsource-variable/archivo'
 import './styles.css'
+import './components.css'
 import { App } from './App'
 import { initTheme } from './lib/theme'
 

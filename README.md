@@ -4,6 +4,31 @@ Application web personnelle de suivi sportif et alimentaire, installable sur iPh
 
 Construite avec Vite, React et TypeScript. Hébergée sur GitHub Pages.
 
+## Ce que fait l'app
+
+- **Accueil** : minutes d'activité, calories brûlées (estimées), pas (saisie manuelle), semaine en pastilles, séance suggérée, résumé des repas.
+- **Salle** : séance suggérée selon le temps disponible (45 / 60 / 75 min), saisie série par série, minuteur de repos, historique modifiable, gestion des exercices et des séances types.
+- **Cardio** : course, vélo, natation ; dernière sortie, kilomètres par semaine, volume conseillé (+10 % maximum par semaine), objectif annuel.
+- **Repas** : calories et macros du jour, idées de plats, ajout depuis tes aliments, les recettes, Open Food Facts (recherche ou code-barres) ou en saisie libre.
+- **Stats** : totaux par jour, semaine, mois ou année, minutes par semaine, records personnels, courbe de poids.
+- **Réglages** : thème, profil, objectifs, besoins estimés, sauvegarde et import d'un fichier JSON.
+
+Les règles de suggestion (double progression, semaine allégée, cardio, nutrition, idées de repas) sont dans `src/lib/rules/`. Elles tournent sur le téléphone, sans réseau.
+
+## Où sont les données
+
+Pour l'instant, **tout est enregistré sur l'appareil** (base IndexedDB du navigateur, via Dexie). Supprimer l'app de l'écran d'accueil ou effacer les données de Safari efface tout : exporte régulièrement une sauvegarde depuis **Réglages > Sauvegarde**. La synchronisation en ligne arrive en Phase 2.
+
+Chaque enregistrement a un `id` (UUID), une date `updated_at` et un champ `deleted` (suppression douce). L'import fusionne : pour chaque élément, la version la plus récente gagne.
+
+## Tests
+
+```bash
+npm test
+```
+
+Les tests vérifient les règles de calcul, la lecture des saisies et la sauvegarde.
+
 ## Lancer l'app sur le PC
 
 Il faut [Node.js](https://nodejs.org) (version LTS). Dans PowerShell, depuis ce dossier :
@@ -27,6 +52,8 @@ npm run build
 ```bash
 npm run preview
 ```
+
+À savoir : Open Food Facts refuse la **recherche par nom** depuis `localhost`. Elle ne fonctionne que sur l'adresse en ligne. La recherche par code-barres marche partout.
 
 ## Déployer
 

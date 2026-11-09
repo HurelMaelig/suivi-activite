@@ -10,7 +10,7 @@ import { Reglages } from './screens/Reglages'
 
 export type Route = 'accueil' | 'salle' | 'cardio' | 'repas' | 'stats' | 'reglages'
 
-const screens: Record<Route, { title: string; view: () => React.ReactElement }> = {
+const screens: Record<Route, { title: string; view: () => React.ReactElement | null }> = {
   accueil: { title: 'Accueil', view: Accueil },
   salle: { title: 'Salle', view: Salle },
   cardio: { title: 'Cardio', view: Cardio },

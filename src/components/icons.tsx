@@ -1,10 +1,10 @@
 import type { ReactNode } from 'react'
 
-function Icon({ children }: { children: ReactNode }) {
+function Icon({ children, size = 24 }: { children: ReactNode; size?: number }) {
   return (
     <svg
-      width="24"
-      height="24"
+      width={size}
+      height={size}
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -60,5 +60,73 @@ export const IconSettings = () => (
 export const IconBack = () => (
   <Icon>
     <path d="M15 5l-7 7 7 7" />
+  </Icon>
+)
+
+export const IconNext = () => (
+  <Icon>
+    <path d="M9 5l7 7-7 7" />
+  </Icon>
+)
+
+export const IconClose = () => (
+  <Icon>
+    <path d="M6 6l12 12M18 6L6 18" />
+  </Icon>
+)
+
+export const IconPlus = ({ size }: { size?: number }) => (
+  <Icon size={size}>
+    <path d="M12 5v14M5 12h14" />
+  </Icon>
+)
+
+export const IconMinus = () => (
+  <Icon>
+    <path d="M5 12h14" />
+  </Icon>
+)
+
+export const IconCheck = () => (
+  <Icon>
+    <path d="M5 12.5l4.5 4.5L19 7" />
+  </Icon>
+)
+
+export const IconSearch = () => (
+  <Icon>
+    <circle cx="11" cy="11" r="6.5" />
+    <path d="M16 16l4 4" />
+  </Icon>
+)
+
+export const IconBarcode = () => (
+  <Icon>
+    <path d="M4 6v12M7 6v12M11 6v12M14 6v12M17 6v12M20 6v12" />
+  </Icon>
+)
+
+export const IconTimer = () => (
+  <Icon>
+    <circle cx="12" cy="13" r="7.5" />
+    <path d="M12 9v4l2.5 2M10 2.5h4" />
+  </Icon>
+)
+
+export const IconPlay = () => (
+  <Icon>
+    <path d="M8 5.5v13l10.5-6.5z" />
+  </Icon>
+)
+
+export const IconUp = () => (
+  <Icon>
+    <path d="M6 15l6-6 6 6" />
+  </Icon>
+)
+
+export const IconDown = () => (
+  <Icon>
+    <path d="M6 9l6 6 6-6" />
   </Icon>
 )

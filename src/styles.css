@@ -10,6 +10,9 @@
   --orange: #c2410c;
   --green-pale: #ddebe3;
   --on-green: #ffffff;
+  --orange-pale: #fbe9df;
+  --danger: #b42318;
+  --track: #e6ebe7;
   --radius: 16px;
   --tabbar-height: 60px;
 }
@@ -27,6 +30,9 @@
     --orange: #f08a5d;
     --green-pale: #1d3329;
     --on-green: #0e1512;
+    --orange-pale: #33241c;
+    --danger: #f97066;
+    --track: #26332c;
   }
 }
 
@@ -41,6 +47,9 @@
   --orange: #f08a5d;
   --green-pale: #1d3329;
   --on-green: #0e1512;
+  --orange-pale: #33241c;
+  --danger: #f97066;
+  --track: #26332c;
 }
 
 * {
