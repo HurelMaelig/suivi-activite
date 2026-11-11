@@ -10,6 +10,7 @@ export function makeClient(url: string, key: string): SupabaseClient {
       autoRefreshToken: true,
       detectSessionInUrl: true, // connexion par le lien de l'e-mail, si on l'ouvre
       storageKey: 'suivi-activite-auth',
+      flowType: 'implicit', // le lien de l'e-mail peut alors être collé dans l'app (voir parseAuthInput)
     },
   })
 }

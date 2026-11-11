@@ -5,9 +5,9 @@ import { applyingRemote, syncOnce, type Cursor, type Remote } from './engine'
 
 // Pilote de la synchronisation : connexion, déclenchements, état affiché dans l'app.
 
-const URL = import.meta.env.VITE_SUPABASE_URL ?? ''
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL ?? ''
 const KEY = import.meta.env.VITE_SUPABASE_KEY ?? ''
-export const syncConfigured = !!(URL && KEY)
+export const syncConfigured = !!(SUPABASE_URL && KEY)
 
 export type SyncStatus = 'disabled' | 'loading' | 'signed-out' | 'idle' | 'syncing' | 'offline' | 'error'
 
@@ -126,7 +126,7 @@ export async function initSync() {
   if (!syncConfigured) return
   try {
     const mod = await import('./supabase')
-    client = mod.makeClient(URL, KEY)
+    client = mod.makeClient(SUPABASE_URL, KEY)
     remote = mod.supabaseRemote(client)
     const { data } = await client.auth.getSession()
     onSession(data.session)
@@ -156,7 +156,7 @@ export async function initSync() {
 
 function authError(error: { message?: string; status?: number }): Error {
   if (error.status === 429) return new Error('Trop de demandes : attends quelques minutes avant de redemander un code.')
-  if (/expired|invalid/i.test(error.message ?? '')) return new Error('Code incorrect ou expiré. Demande un nouveau code.')
+  if (/expired|invalid/i.test(error.message ?? '')) return new Error('Lien ou code expiré, ou déjà utilisé. Demande un nouvel e-mail.')
   if (/fetch|network/i.test(error.message ?? '')) return new Error('Pas de réseau, ou serveur indisponible.')
   return new Error(error.message || 'Erreur de connexion.')
 }
@@ -170,9 +170,43 @@ export async function sendCode(email: string) {
   if (error) throw authError(error)
 }
 
-export async function verifyCode(email: string, code: string) {
+export type AuthInput =
+  | { kind: 'code'; code: string }
+  | { kind: 'link'; tokenHash: string; type: 'magiclink' | 'signup' | 'invite' | 'email' }
+  | { kind: 'invalid'; reason: string }
+
+// Le texte collé peut être le code à 6 chiffres ou le lien « Sign in » de l'e-mail.
+// Le lien contient un jeton qu'on valide ici même, sans ouvrir Safari.
+export function parseAuthInput(text: string): AuthInput {
+  const t = text.trim()
+  const link = t.match(/https?:\/\/[^\s<>"')\]]+/)?.[0]
+  if (link) {
+    let url: URL
+    try {
+      url = new URL(link)
+    } catch {
+      return { kind: 'invalid', reason: 'Lien non reconnu.' }
+    }
+    const tokenHash = url.searchParams.get('token') ?? url.searchParams.get('token_hash')
+    if (!tokenHash) return { kind: 'invalid', reason: 'Lien non reconnu : copie le lien « Sign in » de l’e-mail.' }
+    if (tokenHash.startsWith('pkce_')) return { kind: 'invalid', reason: 'Ce lien ne peut pas être collé : utilise l’app sur l’appareil qui a demandé l’e-mail.' }
+    const raw = url.searchParams.get('type')
+    const type = raw === 'signup' || raw === 'invite' || raw === 'email' ? raw : 'magiclink'
+    return { kind: 'link', tokenHash, type }
+  }
+  const code = t.replace(/\s/g, '')
+  if (/^\d{6,10}$/.test(code)) return { kind: 'code', code }
+  return { kind: 'invalid', reason: 'Colle le lien « Sign in » de l’e-mail, ou tape le code reçu.' }
+}
+
+export async function verifyCode(email: string, input: string) {
   if (!client) throw new Error('Synchronisation non configurée.')
-  const { error } = await client.auth.verifyOtp({ email: email.trim(), token: code.replace(/\s/g, ''), type: 'email' })
+  const parsed = parseAuthInput(input)
+  if (parsed.kind === 'invalid') throw new Error(parsed.reason)
+  const { error } =
+    parsed.kind === 'code'
+      ? await client.auth.verifyOtp({ email: email.trim(), token: parsed.code, type: 'email' })
+      : await client.auth.verifyOtp({ token_hash: parsed.tokenHash, type: parsed.type })
   if (error) throw authError(error)
 }
 

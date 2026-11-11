@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Field } from './ui'
 import { formatAgo } from '../lib/dates'
 import { useOnline } from '../lib/prefs'
-import { sendCode, signOut, syncNow, useSync, verifyCode, type SyncState } from '../sync'
+import { parseAuthInput, sendCode, signOut, syncNow, useSync, verifyCode, type SyncState } from '../sync'
 
 // Texte court de l'état, réutilisé sur l'Accueil
 export function syncLabel(s: SyncState): { text: string; tone: 'ok' | 'muted' | 'error' } {
@@ -98,7 +98,7 @@ function SignIn() {
         }}
       >
         <p className="muted small">
-          Connecte-toi pour sauvegarder tes données en ligne et les retrouver sur un autre appareil. Pas de mot de passe : tu reçois un code par e-mail.
+          Connecte-toi pour sauvegarder tes données en ligne et les retrouver sur un autre appareil. Pas de mot de passe : tu reçois un lien de connexion par e-mail.
         </p>
         <Field label="Adresse e-mail">
           <input className="input" type="email" autoComplete="email" inputMode="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
@@ -106,7 +106,7 @@ function SignIn() {
         {!online && <p className="muted small">Hors ligne : la connexion demande le réseau.</p>}
         {error && <p className="error">{error}</p>}
         <button type="submit" className="button primary" disabled={busy || !online || !email.includes('@')}>
-          Recevoir un code
+          Recevoir l’e-mail de connexion
         </button>
       </form>
     )
@@ -121,25 +121,27 @@ function SignIn() {
       }}
     >
       <p className="muted small">
-        Un e-mail a été envoyé à <strong>{email}</strong>. Tape ici le code qu’il contient. Sur iPhone, utilise le code plutôt que le lien : le lien ouvrirait Safari et non l’app.
+        Un e-mail a été envoyé à <strong>{email}</strong> (pense aux indésirables). <strong>Ne touche pas le lien</strong> : il ouvrirait Safari
+        et serait alors déjà utilisé. Fais un appui long sur « Sign in », choisis « Copier le lien », puis colle-le ici.
       </p>
-      <Field label="Code reçu">
-        <input
-          className="input code-input"
-          inputMode="numeric"
+      <Field label="Lien (ou code) reçu par e-mail">
+        <textarea
+          className="input"
+          rows={3}
           autoComplete="one-time-code"
           value={code}
           onChange={(e) => setCode(e.target.value)}
-          placeholder="123456"
+          placeholder="https://…supabase.co/auth/v1/verify?token=…"
           required
         />
       </Field>
+      {code.trim() && parseAuthInput(code).kind === 'invalid' && <p className="muted small">{(parseAuthInput(code) as { reason: string }).reason}</p>}
       {error && <p className="error">{error}</p>}
-      <button type="submit" className="button primary" disabled={busy || code.replace(/\s/g, '').length < 6}>
+      <button type="submit" className="button primary" disabled={busy || parseAuthInput(code).kind === 'invalid'}>
         Valider
       </button>
       <button type="button" className="button" onClick={() => setStep('email')} disabled={busy}>
-        Changer d’adresse ou renvoyer un code
+        Changer d’adresse ou renvoyer l’e-mail
       </button>
     </form>
   )
