@@ -30,7 +30,7 @@ La synchronisation (`src/sync/`) envoie les changements locaux, puis récupère 
 3. **Authentication > URL Configuration** :
    - Site URL : `https://hurelmaelig.github.io/suivi-activite/`
    - Redirect URLs : ajoute `http://localhost:5173/**` et `http://localhost:4173/**`
-4. **Authentication > Emails > Magic Link** : le modèle doit contenir le code `{{ .Token }}`. Sur iPhone, l'app installée ne peut pas recevoir le lien (il s'ouvre dans Safari, qui a son propre stockage) : on tape donc le code dans l'app.
+4. Rien à changer dans les e-mails. Sur iPhone, l'app installée ne peut pas recevoir le lien de connexion (il s'ouvre dans Safari, qui a son propre stockage) : on **copie le lien** de l'e-mail (appui long) et on le **colle dans l'app**. Avec un service d'envoi externe (SMTP), on pourrait aussi mettre un code `{{ .Token }}` dans le modèle d'e-mail : l'app l'accepte. L'envoi intégré de Supabase est limité à quelques e-mails par heure.
 5. Récupère l'adresse du projet et la clé publique (**publishable** ou **anon**) :
    - en local, dans un fichier `.env.local` (jamais commité) :
 
